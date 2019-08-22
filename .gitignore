@@ -1,0 +1,8 @@
+*.ipch
+*.ilk
+*.log
+*.obj
+*.tlog
+*.pdb
+*.db
+Debug/vc142.idb
