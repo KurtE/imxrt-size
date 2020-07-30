@@ -1,0 +1,2 @@
+D:\GitHub\imxrt-size\Debug\imxrt-size.exe
+D:\GitHub\imxrt-size\Debug\imxrt-size.pdb
