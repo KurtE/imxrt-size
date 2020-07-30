@@ -8,13 +8,22 @@ int printnumbers(unsigned flexram_config, unsigned itcm, unsigned dtcm, unsigned
 	int retval = 0;
 	unsigned dtcm_allocated = 0;
 	unsigned itcm_allocated = 0;
+	char dtcm_itcm_config[17] = "DDDDDDDDDDDDDDDD";
+	char* psz = &dtcm_itcm_config[15]; // Crud code...
 	printf("\rFlexRAM section ITCM+DTCM = 512 KB\r");
-	printf("    Config : %08lx\r", flexram_config);
+	printf("    Config : %08lx (", flexram_config);
 	for (; flexram_config; flexram_config >>= 2) {
-		if ((flexram_config & 3) == 2) dtcm_allocated += 32;	// 32K per bank;
-		else if ((flexram_config & 3) == 3) itcm_allocated += 32;	// 32K per bank;
+		if ((flexram_config & 3) == 2) {
+			*psz-- = 'D';
+			dtcm_allocated += 32;	// 32K per bank;
+		}
+		else if ((flexram_config & 3) == 3) {
+			*psz-- = 'I';
+			itcm_allocated += 32;	// 32K per bank;
+		}
+		else psz--; 
 	}
-	printf("    ITCM : %6d B\t(%5.2f%% of %4d KB)\r", itcm, itcm / (itcm_allocated * 1024.0) * 100, itcm_allocated);
+	printf("%s)\r    ITCM : %6d B\t(%5.2f%% of %4d KB)\r", dtcm_itcm_config, itcm, itcm / (itcm_allocated * 1024.0) * 100, itcm_allocated);
 	printf("    DTCM : %6d B\t(%5.2f%% of %4d KB)\r", dtcm, dtcm / (dtcm_allocated * 1024.0) * 100, dtcm_allocated);
 	if (stack <= 0) {
 		retval = -1;
@@ -67,6 +76,9 @@ int main() {
 
 	if (teensy_model_identifier == 0x24) {
 		retval = printnumbers(flexram_bank_config, etext - stext, ebss - sdata, heap_start - 0x20200000, flashimagelen, estack-ebss, 512, 1984);
+	}
+	else if (teensy_model_identifier == 0x25) {
+		retval = printnumbers(flexram_bank_config, etext - stext, ebss - sdata, heap_start - 0x20200000, flashimagelen, estack - ebss, 512, 7936);
 	}
 
 	return retval;
