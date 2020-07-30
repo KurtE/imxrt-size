@@ -5,4 +5,9 @@
 *.tlog
 *.pdb
 *.db
-Debug/vc142.idb
+*.vs/*
+*_vm/
+*.ipdb
+*.idb
+.vs/imxrt-size/v16/.suo
+.vs/imxrt-size/v16/.suo

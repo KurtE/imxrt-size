@@ -10,7 +10,7 @@ int printnumbers(unsigned flexram_config, unsigned itcm, unsigned dtcm, unsigned
 	unsigned itcm_allocated = 0;
 	char dtcm_itcm_config[17] = "DDDDDDDDDDDDDDDD";
 	char* psz = &dtcm_itcm_config[15]; // Crud code...
-	printf("\rFlexRAM section ITCM+DTCM = 512 KB\r");
+	printf("\nFlexRAM section ITCM+DTCM = 512 KB\n");
 	printf("    Config : %08lx (", flexram_config);
 	for (; flexram_config; flexram_config >>= 2) {
 		if ((flexram_config & 3) == 2) {
@@ -23,20 +23,20 @@ int printnumbers(unsigned flexram_config, unsigned itcm, unsigned dtcm, unsigned
 		}
 		else psz--; 
 	}
-	printf("%s)\r    ITCM : %6d B\t(%5.2f%% of %4d KB)\r", dtcm_itcm_config, itcm, itcm / (itcm_allocated * 1024.0) * 100, itcm_allocated);
-	printf("    DTCM : %6d B\t(%5.2f%% of %4d KB)\r", dtcm, dtcm / (dtcm_allocated * 1024.0) * 100, dtcm_allocated);
+	printf("%s)\n    ITCM : %6d B\t(%5.2f%% of %4d KB)\n", dtcm_itcm_config, itcm, itcm / (itcm_allocated * 1024.0) * 100, itcm_allocated);
+	printf("    DTCM : %6d B\t(%5.2f%% of %4d KB)\n", dtcm, dtcm / (dtcm_allocated * 1024.0) * 100, dtcm_allocated);
 	if (stack <= 0) {
 		retval = -1;
-		printf(">>>>> Error FlexRAM Filled no room for Stack: %d <<<<<\r", stack);
+		printf(">>>>> Error FlexRAM Filled no room for Stack: %d <<<<<\n", stack);
 	}
 	else {
-		printf("    Available for Stack: %6d\r", stack);
+		printf("    Available for Stack: %6d\n", stack);
 	}
-	printf("OCRAM: 512KB\r");
-	printf("    DMAMEM: %6d B\t(%5.2f%% of %4d KB)\r", ocram, ocram / (ocramm * 1024.0) * 100, ocramm);
+	printf("OCRAM: 512KB\n");
+	printf("    DMAMEM: %6d B\t(%5.2f%% of %4d KB)\n", ocram, ocram / (ocramm * 1024.0) * 100, ocramm);
 	ocram = ocramm*1024 - ocram;
-	printf("    Available for Heap: %6d B\t(%5.2f%% of %4d KB)\r", ocram, ocram / (ocramm * 1024.0) * 100, ocramm);
-	printf("Flash: %6d B\t(%5.2f%% of %4d KB)\r", flash, flash / (flashm * 1024.0) * 100, flashm);
+	printf("    Available for Heap: %6d B\t(%5.2f%% of %4d KB)\n", ocram, ocram / (ocramm * 1024.0) * 100, ocramm);
+	printf("Flash: %6d B\t(%5.2f%% of %4d KB)\n", flash, flash / (flashm * 1024.0) * 100, flashm);
 	return retval;
 }
 
