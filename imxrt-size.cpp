@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int printnumbers(unsigned flexram_config, unsigned itcm, unsigned dtcm, unsigned ocram, unsigned flash, int stack,
+int printnumbers(unsigned flexram_config, unsigned itcm, unsigned dtcm, unsigned ocram, unsigned flash, int stack, unsigned extmem,
 	unsigned ocramm, unsigned flashm)
 {
 	int retval = 0;
@@ -36,6 +36,10 @@ int printnumbers(unsigned flexram_config, unsigned itcm, unsigned dtcm, unsigned
 	printf("    DMAMEM: %6d B\t(%5.2f%% of %4d KB)\n", ocram, ocram / (ocramm * 1024.0) * 100, ocramm);
 	ocram = ocramm*1024 - ocram;
 	printf("    Available for Heap: %6d B\t(%5.2f%% of %4d KB)\n", ocram, ocram / (ocramm * 1024.0) * 100, ocramm);
+	if (extmem) {
+		printf("Extmem Used: %u\n", extmem);
+	}
+
 	printf("Flash: %6d B\t(%5.2f%% of %4d KB)\n", flash, flash / (flashm * 1024.0) * 100, flashm);
 	return retval;
 }
@@ -56,6 +60,8 @@ int main() {
 	unsigned heap_start = 0;
 	unsigned flexram_bank_config = 0;
 	unsigned estack = 0;
+	unsigned extram_start = 0;
+	unsigned extram_end = 0;
 
 	do {
 		s = fgets(str, sizeof(str), stdin);
@@ -68,17 +74,20 @@ int main() {
 			if (strstr(str, "B _ebss")) ebss = strtol(str, NULL, 16);
 			if (strstr(str, " _heap_start")) heap_start = strtol(str, NULL, 16);
 			if (strstr(str, " _flashimagelen")) flashimagelen = strtol(str, NULL, 16);
-			if (strstr(str, "B _estack")) estack = strtoul(str, NULL, 16);
+			if (strstr(str, " _estack")) estack = strtoul(str, NULL, 16);
 			if (strstr(str, " _flexram_bank_config")) flexram_bank_config = strtoul(str, NULL, 16);
+			if (strstr(str, " _extram_start")) extram_start = strtoul(str, NULL, 16);
+			if (strstr(str, " _extram_end")) extram_end = strtoul(str, NULL, 16);
 			//puts( str );
 		}
 	} while (s);
 
+	printf("estack:%x ebss:%x\n", estack, ebss);
 	if (teensy_model_identifier == 0x24) {
-		retval = printnumbers(flexram_bank_config, etext - stext, ebss - sdata, heap_start - 0x20200000, flashimagelen, estack-ebss, 512, 1984);
+		retval = printnumbers(flexram_bank_config, etext - stext, ebss - sdata, heap_start - 0x20200000, flashimagelen, estack - ebss, 0, 512, 1984);
 	}
 	else if (teensy_model_identifier == 0x25) {
-		retval = printnumbers(flexram_bank_config, etext - stext, ebss - sdata, heap_start - 0x20200000, flashimagelen, estack - ebss, 512, 7936);
+		retval = printnumbers(flexram_bank_config, etext - stext, ebss - sdata, heap_start - 0x20200000, flashimagelen, estack - ebss, extram_end - extram_start, 512, 7936);
 	}
 
 	return retval;
